@@ -38,4 +38,9 @@ public class MemberController {
     public ResponseDto<?> login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
         return memberService.login(loginRequestDto);
     }
+
+//    @RequestMapping(value = "api/member/delete", method = RequestMethod.DELETE)
+//    public ResponseDto<?> delete(@RequestBody @Valid LoginRequestDto loginRequestDto) {
+//        return memberService.delete(loginRequestDto);
+//    }
 }

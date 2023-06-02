@@ -88,4 +88,21 @@ public class MemberService {
                         .build()
         );
     }
+
+//    public ResponseDto<?> delete(LoginRequestDto loginRequestDto) {
+//        Member member = isPresentMember(loginRequestDto.getNickname());
+//        if(member == null) {
+//            return ResponseDto.fail("실패","계정이 존재하지 않습니다.");
+//        }
+//
+//        memberRepository.delete(member);
+//        return ResponseDto.success(
+//                MemberResponseDto.builder()
+//                        .id(member.getId())
+//                        .nickname(member.getNickname())
+//                        .createdAt(member.getCreatedAt())
+//                        .modifiedAt(member.getModifiedAt())
+//                        .build()
+//        );
+//    }
 }
