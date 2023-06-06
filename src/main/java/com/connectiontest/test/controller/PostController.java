@@ -44,4 +44,19 @@ public class PostController {
     public ResponseDto<?> deletePost(@PathVariable Long postId, HttpServletRequest request) {
         return postService.deletePost(postId, request);
     }
+
+    @GetMapping(value = "/list")
+    public ResponseDto<?> getAllPosts(HttpServletRequest request) {
+        return postService.getAllPosts(request);
+    }
+
+    @GetMapping(value = "/detail/{postId}")
+    public ResponseDto<?> getPost(@PathVariable Long postId, HttpServletRequest request) {
+        return postService.getPost(postId, request);
+    }
+
+    @GetMapping(value = "/list/{category}")
+    public ResponseDto<?> getCategoryPost(@PathVariable String category, HttpServletRequest request) {
+        return postService.getCategoryPost(category, request);
+    }
 }
