@@ -6,10 +6,7 @@ import com.connectiontest.test.dto.response.ResponseDto;
 import com.connectiontest.test.service.MemberService;
 import com.connectiontest.test.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,5 +33,15 @@ public class PostController {
     @PostMapping(value = "/create")
     public ResponseDto<?> createPost(@RequestBody @Valid PostRequestDto postRequestDto, HttpServletRequest request) {
         return postService.createPost(postRequestDto, request);
+    }
+
+    @PutMapping(value = "/update/{postId}")
+    public ResponseDto<?> updatePost(@PathVariable Long postId, @RequestBody @Valid PostRequestDto postRequestDto, HttpServletRequest request) {
+        return postService.updatePost(postId, postRequestDto, request);
+    }
+
+    @DeleteMapping(value = "/delete/{postId}")
+    public ResponseDto<?> deletePost(@PathVariable Long postId, HttpServletRequest request) {
+        return postService.deletePost(postId, request);
     }
 }

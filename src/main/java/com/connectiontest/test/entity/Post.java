@@ -1,5 +1,6 @@
 package com.connectiontest.test.entity;
 
+import com.connectiontest.test.dto.request.PostRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,4 +44,15 @@ public class Post extends Timestamped {
     @JoinColumn(name = "member_table_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
+
+    public void update(PostRequestDto postRequestDto) {
+        this.category = postRequestDto.getCategory();
+        this.title = postRequestDto.getTitle();
+        this.content = postRequestDto.getContent();
+        this.completion = postRequestDto.getCompletion();
+    }
+
+    public boolean validateMember(Member member) {
+        return !this.member.equals(member);
+    }
 }
