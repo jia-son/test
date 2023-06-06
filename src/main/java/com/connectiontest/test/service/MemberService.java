@@ -1,9 +1,6 @@
 package com.connectiontest.test.service;
 
-import com.connectiontest.test.dto.request.LoginRequestDto;
-import com.connectiontest.test.dto.request.MemberDeleteRequestDto;
-import com.connectiontest.test.dto.request.MemberRequestDto;
-import com.connectiontest.test.dto.request.TokenDto;
+import com.connectiontest.test.dto.request.*;
 import com.connectiontest.test.dto.response.MemberResponseDto;
 import com.connectiontest.test.dto.response.ResponseDto;
 import com.connectiontest.test.entity.Member;
@@ -81,10 +78,6 @@ public class MemberService {
             return ResponseDto.fail("INVALID_MEMBER", "사용자를 찾을 수 없습니다.");
         }
 
-//    UsernamePasswordAuthenticationToken authenticationToken =
-//        new UsernamePasswordAuthenticationToken(requestDto.getNickname(), requestDto.getPassword());
-//    Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
         TokenDto tokenDto = tokenProvider.generateTokenDto(member);
         tokenToHeaders(tokenDto, response);
 
@@ -112,18 +105,7 @@ public class MemberService {
         return tokenProvider.deleteRefreshToken(member);
     }
 
-    @Transactional(readOnly = true)
-    public Member isPresentMember(String memberId) {
-        Optional<Member> optionalMember = memberRepository.findByMemberId(memberId);
-        return optionalMember.orElse(null);
-    }
-
-    public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
-        response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
-        response.addHeader("Refresh-Token", tokenDto.getRefreshToken());
-        response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
-    }
-
+    @Transactional
     public ResponseDto<?> delete(MemberDeleteRequestDto memberDeleteRequestDto, HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
@@ -142,5 +124,58 @@ public class MemberService {
         tokenProvider.deleteRefreshToken(member);
 
         return ResponseDto.success("정상적으로 탈퇴되었습니다.");
+    }
+    @Transactional
+    public ResponseDto<?> updateNickname(NicknameUpdateRequestDto nicknameUpdateRequestDto, HttpServletRequest request) {
+        if (null == request.getHeader("Refresh-Token")) {
+            return ResponseDto.fail("MEMBER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return ResponseDto.fail("MEMBER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        System.out.println("Refresh-Token:" + request.getHeader("Refresh-Token"));
+        System.out.println("대체 뭐가 문제냐: " + validateMember(request));
+
+        Member member = validateMember(request);
+        if (null == member) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+        member.update(nicknameUpdateRequestDto);
+        memberRepository.save(member);
+
+        return ResponseDto.success(
+                MemberResponseDto.builder()
+                        .id(member.getId())
+                        .memberId(member.getMemberId())
+                        .nickname(member.getNickname())
+                        .createdAt(member.getCreatedAt())
+                        .modifiedAt(member.getModifiedAt())
+                        .build()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Member isPresentMember(String memberId) {
+        Optional<Member> optionalMember = memberRepository.findByMemberId(memberId);
+        return optionalMember.orElse(null);
+    }
+
+    @Transactional
+    public Member validateMember(HttpServletRequest request) {
+        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+            return null;
+        }
+        return tokenProvider.getMemberFromAuthentication();
+    }
+
+    public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
+        response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
+        response.addHeader("Refresh-Token", tokenDto.getRefreshToken());
+        response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
     }
 }

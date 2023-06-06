@@ -3,6 +3,7 @@ package com.connectiontest.test.controller;
 import com.connectiontest.test.dto.request.LoginRequestDto;
 import com.connectiontest.test.dto.request.MemberDeleteRequestDto;
 import com.connectiontest.test.dto.request.MemberRequestDto;
+import com.connectiontest.test.dto.request.NicknameUpdateRequestDto;
 import com.connectiontest.test.dto.response.ResponseDto;
 import com.connectiontest.test.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -48,5 +49,11 @@ public class MemberController {
     @PostMapping(value = "/delete")
     public ResponseDto<?> delete(@RequestBody @Valid MemberDeleteRequestDto memberDeleteRequestDto, HttpServletRequest request) {
         return memberService.delete(memberDeleteRequestDto, request);
+    }
+
+    //PUTT으로 처리할 수 있을 듯하여 진행해봄
+    @PutMapping(value = "/update/nickname")
+    public ResponseDto<?> updateNickname(@RequestBody @Valid NicknameUpdateRequestDto nicknameUpdateRequestDto, HttpServletRequest request) {
+        return memberService.updateNickname(nicknameUpdateRequestDto, request);
     }
 }

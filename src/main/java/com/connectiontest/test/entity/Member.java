@@ -2,6 +2,8 @@ package com.connectiontest.test.entity;
 
 import javax.persistence.*;
 
+import com.connectiontest.test.dto.request.NicknameUpdateRequestDto;
+import com.connectiontest.test.dto.request.PostRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,10 +55,14 @@ public class Member extends Timestamped {
 
     );
 
+    public void update(NicknameUpdateRequestDto nicknameUpdateRequestDto) {
+        this.nickname = nicknameUpdateRequestDto.getNickname();
+    }
+
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
         return passwordEncoder.matches(password, this.password);
     }
-    
+
     //추가된 내용
     @Override
     public boolean equals(Object o) {
