@@ -1,6 +1,7 @@
 package com.connectiontest.test.service;
 
 import com.connectiontest.test.dto.request.LoginRequestDto;
+import com.connectiontest.test.dto.request.MemberDeleteRequestDto;
 import com.connectiontest.test.dto.request.MemberRequestDto;
 import com.connectiontest.test.dto.request.TokenDto;
 import com.connectiontest.test.dto.response.MemberResponseDto;
@@ -121,5 +122,25 @@ public class MemberService {
         response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
         response.addHeader("Refresh-Token", tokenDto.getRefreshToken());
         response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
+    }
+
+    public ResponseDto<?> delete(MemberDeleteRequestDto memberDeleteRequestDto, HttpServletRequest request) {
+        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+        Member member = tokenProvider.getMemberFromAuthentication();
+        if (null == member) {
+            return ResponseDto.fail("MEMBER_NOT_FOUND",
+                    "사용자를 찾을 수 없습니다.");
+        }
+
+        if (!member.validatePassword(passwordEncoder, memberDeleteRequestDto.getPassword())) {
+            return ResponseDto.fail("INVALID_PASSWORD", "비밀번호가 일치하지 않습니다.");
+        }
+
+        memberRepository.delete(member);
+        tokenProvider.deleteRefreshToken(member);
+
+        return ResponseDto.success("정상적으로 탈퇴되었습니다.");
     }
 }

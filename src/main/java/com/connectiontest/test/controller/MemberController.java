@@ -1,6 +1,7 @@
 package com.connectiontest.test.controller;
 
 import com.connectiontest.test.dto.request.LoginRequestDto;
+import com.connectiontest.test.dto.request.MemberDeleteRequestDto;
 import com.connectiontest.test.dto.request.MemberRequestDto;
 import com.connectiontest.test.dto.response.ResponseDto;
 import com.connectiontest.test.service.MemberService;
@@ -42,5 +43,10 @@ public class MemberController {
     @GetMapping(value = "/logout")
     public ResponseDto<?> logout(HttpServletRequest request) {
         return memberService.logout(request);
+    }
+
+    @PostMapping(value = "/delete")
+    public ResponseDto<?> delete(@RequestBody @Valid MemberDeleteRequestDto memberDeleteRequestDto, HttpServletRequest request) {
+        return memberService.delete(memberDeleteRequestDto, request);
     }
 }
