@@ -5,11 +5,9 @@ import com.connectiontest.test.dto.request.MemberRequestDto;
 import com.connectiontest.test.dto.response.ResponseDto;
 import com.connectiontest.test.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -26,21 +24,25 @@ import javax.validation.Valid;
  */
 @RequiredArgsConstructor
 @RestController
+@RequestMapping(value = "/member")
 public class MemberController {
+
     private final MemberService memberService;
 
-    @RequestMapping(value = "api/member/signup", method = RequestMethod.POST)
-    public ResponseDto<?> signup(@RequestBody @Valid MemberRequestDto memberRequestDto) {
-        return memberService.createMember(memberRequestDto);
+    @PostMapping(value = "/signup")
+    public ResponseDto<?> signup(@RequestBody @Valid MemberRequestDto requestDto) {
+        return memberService.createMember(requestDto);
     }
 
-    @RequestMapping(value = "api/member/login", method = RequestMethod.POST)
-    public ResponseDto<?> login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
-        return memberService.login(loginRequestDto);
+    @PostMapping(value = "/login")
+    public ResponseDto<?> login(@RequestBody @Valid LoginRequestDto requestDto,
+                                HttpServletResponse response
+    ) {
+        return memberService.login(requestDto, response);
     }
 
-//    @RequestMapping(value = "api/member/delete", method = RequestMethod.DELETE)
-//    public ResponseDto<?> delete(@RequestBody @Valid LoginRequestDto loginRequestDto) {
-//        return memberService.delete(loginRequestDto);
-//    }
+    @GetMapping(value = "logout")
+    public ResponseDto<?> logout(HttpServletRequest request) {
+        return memberService.logout(request);
+    }
 }

@@ -1,6 +1,11 @@
 package com.connectiontest.test.configuration;
 
+import com.connectiontest.test.jwt.AccessDeniedHandlerException;
+import com.connectiontest.test.jwt.AuthenticationEntryPointException;
+import com.connectiontest.test.jwt.TokenProvider;
+import com.connectiontest.test.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.ConditionalOnDefaultWebSecurity;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -32,6 +37,35 @@ import org.springframework.security.web.SecurityFilterChain;
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class SecurityConfiguration {
 
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+
+//    @Bean
+//    @Order(SecurityProperties.BASIC_AUTH_ORDER)
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http.cors();
+//
+//        http.csrf().disable()
+//
+//                .sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//
+//                .and()
+//                .authorizeRequests()
+//                .antMatchers("/api/member/**").permitAll()
+//                .anyRequest().authenticated();
+//
+//        return http.build();
+//    }
+    @Value("${jwt.secret}")
+    String SECRET_KEY;
+    private final TokenProvider tokenProvider;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final AuthenticationEntryPointException authenticationEntryPointException;
+    private final AccessDeniedHandlerException accessDeniedHandlerException;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -44,13 +78,21 @@ public class SecurityConfiguration {
 
         http.csrf().disable()
 
+                .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPointException)
+                .accessDeniedHandler(accessDeniedHandlerException)
+
+                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/member/**").permitAll()
-                .anyRequest().authenticated();
+                .antMatchers("/member/**").permitAll()
+                .anyRequest().authenticated()
+
+                .and()
+                .apply(new JwtSecurityConfiguration(SECRET_KEY, tokenProvider, userDetailsService));
 
         return http.build();
     }
