@@ -103,6 +103,7 @@ public class PostService {
         }
 
         post.update(postRequestDto);
+        postRepository.save(post);
 
         return ResponseDto.success(
                 PostResponseDto.builder()

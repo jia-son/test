@@ -21,4 +21,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByMemberIdOrderByModifiedAtDesc(Long id);
 
     List<Post> findAllByCategoryOrderByModifiedAtDesc(String category);
+
+    Long countBy();
+    Long countByCompletionGreaterThanEqual(Integer completion);
 }
