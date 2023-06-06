@@ -17,6 +17,6 @@ import java.util.Optional;
  * 2023-06-01        wldk9       최초 생성
  */
 public interface MemberRepository extends JpaRepository<Member, Long> {
-    Optional<Member> findByNickname(String nickname);
+    Optional<Member> findByMemberId(String memberId);
     Optional<Member> findById(Long id);
 }

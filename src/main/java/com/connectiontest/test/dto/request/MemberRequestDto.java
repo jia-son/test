@@ -26,6 +26,11 @@ public class MemberRequestDto {
     @NotBlank
     @Size(min = 4, max = 12)
     @Pattern(regexp = "[a-zA-Z\\d]*${3,12}")
+    private String memberId;
+
+    @NotBlank
+    @Size(min = 1, max = 10)
+    @Pattern(regexp = "[a-zA-Z가-힣\\d]*${0,12}")
     private String nickname;
 
     @NotBlank

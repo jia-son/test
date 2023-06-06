@@ -35,13 +35,11 @@ public class MemberController {
     }
 
     @PostMapping(value = "/login")
-    public ResponseDto<?> login(@RequestBody @Valid LoginRequestDto requestDto,
-                                HttpServletResponse response
-    ) {
+    public ResponseDto<?> login(@RequestBody @Valid LoginRequestDto requestDto, HttpServletResponse response) {
         return memberService.login(requestDto, response);
     }
 
-    @GetMapping(value = "logout")
+    @GetMapping(value = "/logout")
     public ResponseDto<?> logout(HttpServletRequest request) {
         return memberService.logout(request);
     }

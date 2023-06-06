@@ -23,7 +23,7 @@ import javax.validation.constraints.NotBlank;
 public class LoginRequestDto {
 
     @NotBlank
-    private String nickname;
+    private String memberId;
 
     @NotBlank
     private String password;

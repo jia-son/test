@@ -33,6 +33,9 @@ public class Member extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
+    private String memberId;
+
     @Column(nullable = false)
     private String nickname;
 

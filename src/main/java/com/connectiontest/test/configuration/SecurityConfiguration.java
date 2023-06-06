@@ -36,29 +36,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @ConditionalOnDefaultWebSecurity
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class SecurityConfiguration {
-
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-
-//    @Bean
-//    @Order(SecurityProperties.BASIC_AUTH_ORDER)
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.cors();
-//
-//        http.csrf().disable()
-//
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//
-//                .and()
-//                .authorizeRequests()
-//                .antMatchers("/api/member/**").permitAll()
-//                .anyRequest().authenticated();
-//
-//        return http.build();
-//    }
     @Value("${jwt.secret}")
     String SECRET_KEY;
     private final TokenProvider tokenProvider;
