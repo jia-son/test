@@ -56,4 +56,10 @@ public class MemberController {
     public ResponseDto<?> updateNickname(@RequestBody @Valid NicknameUpdateRequestDto nicknameUpdateRequestDto, HttpServletRequest request) {
         return memberService.updateNickname(nicknameUpdateRequestDto, request);
     }
+
+    //재발급
+      @RequestMapping(value = "/api/auth/member/reissue", method = RequestMethod.POST)
+      public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+        return memberService.reissue(request, response);
+      }
 }

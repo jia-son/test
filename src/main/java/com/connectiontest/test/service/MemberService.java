@@ -4,13 +4,17 @@ import com.connectiontest.test.dto.request.*;
 import com.connectiontest.test.dto.response.MemberResponseDto;
 import com.connectiontest.test.dto.response.ResponseDto;
 import com.connectiontest.test.entity.Member;
+import com.connectiontest.test.entity.RefreshToken;
+import com.connectiontest.test.jwt.JwtFilter;
 import com.connectiontest.test.jwt.TokenProvider;
 import com.connectiontest.test.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -92,25 +96,36 @@ public class MemberService {
         );
     }
 
+    //일단 시험 삼아서 하나 고침
     public ResponseDto<?> logout(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+//        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
+//            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+//        }
+        if (!tokenProvider.validateToken(resolveToken(request))) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
-        Member member = tokenProvider.getMemberFromAuthentication();
-        if (null == member) {
+//        Member member = tokenProvider.getMemberFromAuthentication();
+        String memberId = (tokenProvider.getMemberFromAuthentication()).getMemberId();
+        Optional<Member> member = memberRepository.findByMemberId(memberId);
+        if (null == member.get()) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "사용자를 찾을 수 없습니다.");
         }
 
-        return tokenProvider.deleteRefreshToken(member);
+        return tokenProvider.deleteRefreshToken(member.get());
     }
 
     @Transactional
     public ResponseDto<?> delete(MemberDeleteRequestDto memberDeleteRequestDto, HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+//        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
+//            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+//        }
+        if (!tokenProvider.validateToken(resolveToken(request))) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
-        Member member = tokenProvider.getMemberFromAuthentication();
+//        Member member = tokenProvider.getMemberFromAuthentication();
+        String memberId = (tokenProvider.getMemberFromAuthentication()).getMemberId();
+        Member member = (memberRepository.findByMemberId(memberId)).get();
         if (null == member) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "사용자를 찾을 수 없습니다.");
@@ -127,20 +142,19 @@ public class MemberService {
     }
     @Transactional
     public ResponseDto<?> updateNickname(NicknameUpdateRequestDto nicknameUpdateRequestDto, HttpServletRequest request) {
-        if (null == request.getHeader("Refresh-Token")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
+//        if (null == request.getHeader("RefreshToken")) {
+//            return ResponseDto.fail("MEMBER_NOT_FOUND",
+//                    "로그인이 필요합니다.");
+//        }
 
         if (null == request.getHeader("Authorization")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
 
-        System.out.println("Refresh-Token:" + request.getHeader("Refresh-Token"));
-        System.out.println("대체 뭐가 문제냐: " + validateMember(request));
-
-        Member member = validateMember(request);
+//        Member member = validateMember(request);
+        String memberId = (tokenProvider.getMemberFromAuthentication()).getMemberId();
+        Member member = memberRepository.findByMemberId(memberId).get();
         if (null == member) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
@@ -167,7 +181,10 @@ public class MemberService {
 
     @Transactional
     public Member validateMember(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+//        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
+//            return null;
+//        }
+        if (!tokenProvider.validateToken(resolveToken(request))) {
             return null;
         }
         return tokenProvider.getMemberFromAuthentication();
@@ -175,7 +192,42 @@ public class MemberService {
 
     public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
         response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
-        response.addHeader("Refresh-Token", tokenDto.getRefreshToken());
+        response.addHeader("RefreshToken", tokenDto.getRefreshToken());
         response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    //재발급
+    @Transactional
+    public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+        Member member = tokenProvider.getMemberFromAuthentication();
+        if (null == member) {
+            return ResponseDto.fail("MEMBER_NOT_FOUND",
+                    "사용자를 찾을 수 없습니다.");
+        }
+
+//         이게 맞나....
+//        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Access-Token"));
+        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+        RefreshToken refreshToken = tokenProvider.isPresentRefreshToken(member);
+
+        if (!refreshToken.getValue().equals(request.getHeader("RefreshToken"))) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+        TokenDto tokenDto = tokenProvider.generateTokenDto(member);
+        refreshToken.updateValue(tokenDto.getRefreshToken());
+        tokenToHeaders(tokenDto, response);
+        return ResponseDto.success("success");
     }
 }

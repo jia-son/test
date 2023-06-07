@@ -127,14 +127,14 @@ public class PostService {
 
     @Transactional
     public Member validateMember(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
             return null;
         }
         return tokenProvider.getMemberFromAuthentication();
     }
 
     public ResponseDto<?> deletePost(Long postId, HttpServletRequest request) {
-        if (null == request.getHeader("Refresh-Token")) {
+        if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
@@ -164,7 +164,7 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public ResponseDto<?> getAllPosts(HttpServletRequest request) {
-        if (null == request.getHeader("Refresh-Token")) {
+        if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
@@ -198,7 +198,7 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public ResponseDto<?> getPost(Long postId, HttpServletRequest request) {
-        if (null == request.getHeader("Refresh-Token")) {
+        if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
@@ -233,7 +233,7 @@ public class PostService {
     }
 
     public ResponseDto<?> getCategoryPost(String category, HttpServletRequest request) {
-        if (null == request.getHeader("Refresh-Token")) {
+        if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
