@@ -1,9 +1,8 @@
 package com.connectiontest.test.controller;
 
-import com.connectiontest.test.dto.request.LoginRequestDto;
-import com.connectiontest.test.dto.request.MemberDeleteRequestDto;
-import com.connectiontest.test.dto.request.MemberRequestDto;
-import com.connectiontest.test.dto.request.NicknameUpdateRequestDto;
+import com.connectiontest.test.dto.request.MemberDeleteReqDto;
+import com.connectiontest.test.dto.request.MemberLoginReqDto;
+import com.connectiontest.test.dto.request.MemberSignupReqDto;
 import com.connectiontest.test.dto.response.ResponseDto;
 import com.connectiontest.test.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -14,52 +13,46 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 /**
- * packageName    : com.connectiontest.test.controller
+ * packageName    : com.member.member_jwt.controller
  * fileName       : MemberController
- * author         : wldk9
- * date           : 2023-06-01
+ * author         : sonjia
+ * date           : 2023-06-08
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2023-06-01        wldk9       최초 생성
+ * 2023-06-08        sonjia       최초 생성
+ *                                뷰에서의 요청을 받아 서비스단과 연결짓는 역할을 하는 클래스
  */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/member")
 public class MemberController {
 
+    // 서비스단의 메서드를 사용하기 위해 필드로 선언
     private final MemberService memberService;
 
+    // 회원가입
     @PostMapping(value = "/signup")
-    public ResponseDto<?> signup(@RequestBody @Valid MemberRequestDto requestDto) {
-        return memberService.createMember(requestDto);
+    public ResponseDto<?> signup(@RequestBody @Valid MemberSignupReqDto memberSignupReqDto) {
+        return memberService.createMember(memberSignupReqDto);
     }
 
+    // 로그인, 토큰을 담아 보내야 하기 때문에 HttpServletResponse도 함께 넣는다.
     @PostMapping(value = "/login")
-    public ResponseDto<?> login(@RequestBody @Valid LoginRequestDto requestDto, HttpServletResponse response) {
-        return memberService.login(requestDto, response);
+    public ResponseDto<?> login(@RequestBody @Valid MemberLoginReqDto memberLoginReqDto, HttpServletResponse response) {
+        return memberService.login(memberLoginReqDto, response);
     }
 
+    // 로그아웃, 사용자로부터 받아야할 정보가 따로 없는 대신 토큰을 봐야하기때문에 HttpServletRequest만 파라미터로 입력한다.
     @GetMapping(value = "/logout")
     public ResponseDto<?> logout(HttpServletRequest request) {
         return memberService.logout(request);
     }
 
+    // 회원 탈퇴
     @PostMapping(value = "/delete")
-    public ResponseDto<?> delete(@RequestBody @Valid MemberDeleteRequestDto memberDeleteRequestDto, HttpServletRequest request) {
-        return memberService.delete(memberDeleteRequestDto, request);
+    public ResponseDto<?> delete(@RequestBody @Valid MemberDeleteReqDto memberDeleteReqDto, HttpServletRequest request) {
+        return memberService.delete(memberDeleteReqDto, request);
     }
-
-    //PUTT으로 처리할 수 있을 듯하여 진행해봄
-    @PutMapping(value = "/update/nickname")
-    public ResponseDto<?> updateNickname(@RequestBody @Valid NicknameUpdateRequestDto nicknameUpdateRequestDto, HttpServletRequest request) {
-        return memberService.updateNickname(nicknameUpdateRequestDto, request);
-    }
-
-    //재발급
-      @RequestMapping(value = "/api/auth/member/reissue", method = RequestMethod.POST)
-      public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-        return memberService.reissue(request, response);
-      }
 }

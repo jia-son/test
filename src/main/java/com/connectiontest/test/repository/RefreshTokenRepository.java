@@ -1,21 +1,23 @@
 package com.connectiontest.test.repository;
 
-import com.connectiontest.test.entity.Member;
-import com.connectiontest.test.entity.RefreshToken;
+import com.connectiontest.test.domain.entity.Member;
+import com.connectiontest.test.domain.entity.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
 /**
- * packageName    : com.connectiontest.test.repository
+ * packageName    : com.member.member_jwt.repository
  * fileName       : RefreshTokenRepository
- * author         : wldk9
- * date           : 2023-06-06
+ * author         : sonjia
+ * date           : 2023-06-08
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2023-06-06        wldk9       최초 생성
+ * 2023-06-08        sonjia       최초 생성
+ *                                DB와 직접적인 소통을 하는 인터페이스
+ *                                JpaRepository<?, ?>에는 항상 엔터티와 고유값의 데이터 타입을 입력해주어야 함
  */
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
     Optional<RefreshToken> findByMember(Member member);

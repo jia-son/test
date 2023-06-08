@@ -1,8 +1,8 @@
 package com.connectiontest.test.configuration;
 
+import com.connectiontest.test.impl.UserDetailsServiceImpl;
 import com.connectiontest.test.jwt.JwtFilter;
 import com.connectiontest.test.jwt.TokenProvider;
-import com.connectiontest.test.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,15 +10,16 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * packageName    : com.connectiontest.test.configuration
+ * packageName    : com.member.member_jwt.configuration
  * fileName       : JwtSecurityConfiguration
- * author         : wldk9
- * date           : 2023-06-06
+ * author         : sonjia
+ * date           : 2023-06-08
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2023-06-06        wldk9       최초 생성
+ * 2023-06-08        sonjia       최초 생성
+ *                                SecurityConfiguration에 추가해줄 JwtSecurityConfiguration
  */
 @RequiredArgsConstructor
 public class JwtSecurityConfiguration

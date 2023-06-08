@@ -8,21 +8,22 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * packageName    : com.connectiontest.test.dto.response
- * fileName       : MemberResponseDto
- * author         : wldk9
- * date           : 2023-06-01
+ * packageName    : com.member.member_jwt.dto.res
+ * fileName       : MemberResDto
+ * author         : sonjia
+ * date           : 2023-06-08
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2023-06-01        wldk9       최초 생성
+ * 2023-06-08        sonjia       최초 생성
+ *                                entity타입의 정보에서 필요한 것만 담아 보내기 위한 dto
  */
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberResponseDto {
+public class MemberResDto {
     private Long id;
     private String memberId;
     private String nickname;

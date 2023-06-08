@@ -5,26 +5,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 /**
- * packageName    : com.connectiontest.test.dto.request
- * fileName       : NicknameUpdateRequestDto
- * author         : wldk9
- * date           : 2023-06-07
+ * packageName    : com.member.member_jwt.dto.request
+ * fileName       : MemberDeleteReqDto
+ * author         : sonjia
+ * date           : 2023-06-08
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2023-06-07        wldk9       최초 생성
+ * 2023-06-08        sonjia       최초 생성
+ *                                회원 탈퇴를 요청할 때 비밀번호를 입력받기 위한 dto
  */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NicknameUpdateRequestDto {
+public class MemberDeleteReqDto {
+
     @NotBlank
-    @Size(min = 1, max = 10)
-    @Pattern(regexp = "[a-zA-Z가-힣\\d]*${0,12}")
-    private String nickname;
+    private String password;
 }

@@ -1,8 +1,8 @@
 package com.connectiontest.test.jwt;
 
-import com.connectiontest.test.dto.response.ResponseDto;
-import com.connectiontest.test.service.UserDetailsServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.connectiontest.test.dto.response.ResponseDto;
+import com.connectiontest.test.impl.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -11,9 +11,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,69 +23,59 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Key;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
+/**
+ * packageName    : com.member.member_jwt.jwt
+ * fileName       : JwtFilter
+ * author         : sonjia
+ * date           : 2023-06-08
+ * description    :
+ * ===========================================================
+ * DATE              AUTHOR             NOTE
+ * -----------------------------------------------------------
+ * 2023-06-08        sonjia       최초 생성
+ *                                JwtSecurityConfiguration에서 사용될 내용. 말 그대로 필터 역할을 함.
+ */
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-  public static String AUTHORIZATION_HEADER = "Authorization";
-  public static String BEARER_PREFIX = "Bearer ";
+    private final String SECRET_KEY;
+    private final TokenProvider tokenProvider;
+    private final UserDetailsServiceImpl userDetailsService;
 
-  public static String AUTHORITIES_KEY = "auth";
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
 
-  private final String SECRET_KEY;
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        Key key = Keys.hmacShaKeyFor(keyBytes);
 
-  private final TokenProvider tokenProvider;
-  private final UserDetailsServiceImpl userDetailsService;
+        String jwt = tokenProvider.resolveToken(request);
 
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-      throws IOException, ServletException {
+        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+            Claims claims;
+            try {
+                claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
+            } catch (ExpiredJwtException e) {
+                claims = e.getClaims();
+            }
 
-    byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-    Key key = Keys.hmacShaKeyFor(keyBytes);
+            if (claims.getExpiration().toInstant().toEpochMilli() < Instant.now().toEpochMilli()) {
+                response.setContentType("application/json;charset=UTF-8");
+                response.getWriter().println(
+                        new ObjectMapper().writeValueAsString(
+                                ResponseDto.fail("BAD_REQUEST", "Token이 유효햐지 않습니다.")
+                        )
+                );
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            }
 
-    String jwt = resolveToken(request);
+            String subject = claims.getSubject();
+            UserDetails principal = userDetailsService.loadUserByUsername(subject);
 
-    if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-      Claims claims;
-      try {
-        claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
-      } catch (ExpiredJwtException e) {
-        claims = e.getClaims();
-      }
+            Authentication authentication = new UsernamePasswordAuthenticationToken(principal, jwt, principal.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
 
-      if (claims.getExpiration().toInstant().toEpochMilli() < Instant.now().toEpochMilli()) {
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().println(
-            new ObjectMapper().writeValueAsString(
-                ResponseDto.fail("BAD_REQUEST", "Token이 유효햐지 않습니다.")
-            )
-        );
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      }
-
-      String subject = claims.getSubject();
-      Collection<? extends GrantedAuthority> authorities =
-          Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-              .map(SimpleGrantedAuthority::new)
-              .collect(Collectors.toList());
-
-      UserDetails principal = userDetailsService.loadUserByUsername(subject);
-
-      Authentication authentication = new UsernamePasswordAuthenticationToken(principal, jwt, authorities);
-      SecurityContextHolder.getContext().setAuthentication(authentication);
+        filterChain.doFilter(request, response);
     }
-
-    filterChain.doFilter(request, response);
-  }
-  private String resolveToken(HttpServletRequest request) {
-    String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-    if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-      return bearerToken.substring(7);
-    }
-    return null;
-  }
-
 }

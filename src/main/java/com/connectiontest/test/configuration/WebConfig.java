@@ -1,22 +1,20 @@
 package com.connectiontest.test.configuration;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.List;
-
 /**
- * packageName    : com.connectiontest.test.configuration
+ * packageName    : com.member.member_jwt.configuration
  * fileName       : WebConfig
- * author         : wldk9
- * date           : 2023-06-06
+ * author         : sonjia
+ * date           : 2023-06-08
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2023-06-06        wldk9       최초 생성
+ * 2023-06-08        sonjia       최초 생성
+ *                                프론트랑 연결할 때 포트를 열어줘야 해서 만든 클래스
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {

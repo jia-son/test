@@ -7,20 +7,21 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 
 /**
- * packageName    : com.connectiontest.test.dto.request
- * fileName       : LoginRequestDto
- * author         : wldk9
- * date           : 2023-06-01
+ * packageName    : com.member.member_jwt.dto.request
+ * fileName       : MemberLoginReqDto
+ * author         : sonjia
+ * date           : 2023-06-08
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2023-06-01        wldk9       최초 생성
+ * 2023-06-08        sonjia       최초 생성
+ *                                로그인을 시도할 때 필요한 memberId와 password 정보만 담으면 된다.
  */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequestDto {
+public class MemberLoginReqDto {
 
     @NotBlank
     private String memberId;
