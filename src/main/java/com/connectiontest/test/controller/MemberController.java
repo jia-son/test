@@ -45,9 +45,13 @@ public class MemberController {
     }
 
     // 로그아웃, 사용자로부터 받아야할 정보가 따로 없는 대신 토큰을 봐야하기때문에 HttpServletRequest만 파라미터로 입력한다.
+//    @GetMapping(value = "/logout")
+//    public ResponseDto<?> logout(HttpServletRequest request) {
+//        return memberService.logout(request);
+//    }
     @GetMapping(value = "/logout")
-    public ResponseDto<?> logout(HttpServletRequest request) {
-        return memberService.logout(request);
+    public ResponseDto<?> logout() {
+        return memberService.logout();
     }
 
     // 회원 탈퇴

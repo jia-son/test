@@ -103,13 +103,28 @@ public class MemberService {
     }
 
     // 로그아웃 로직
+//    @Transactional
+//    public ResponseDto<?> logout(HttpServletRequest request) {
+//        // 토큰 유효성 검증
+//        if (!tokenProvider.validateToken(tokenProvider.resolveToken(request))) {
+//            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+//        }
+//
+//        // 토큰을 통해 실제 사용자가 DB상에 존재하는지 확인
+//        Member member = tokenProvider.getMemberFromAuthentication();
+//        if (null == member) {
+//            return ResponseDto.fail("MEMBER_NOT_FOUND",
+//                    "사용자를 찾을 수 없습니다.");
+//        }
+//
+//        /* *
+//        * 위 과정을 다 통과하면 DB에 저장되어 있는 토큰을 삭제
+//        * 토큰이 삭제되면 다시 로그인을 해 토큰을 새로 발급받기 전까지는 사용자에게 권한이 없어진다.
+//        * */
+//        return tokenProvider.deleteRefreshToken(member);
+//    }
     @Transactional
-    public ResponseDto<?> logout(HttpServletRequest request) {
-        // 토큰 유효성 검증
-        if (!tokenProvider.validateToken(tokenProvider.resolveToken(request))) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
-
+    public ResponseDto<?> logout() {
         // 토큰을 통해 실제 사용자가 DB상에 존재하는지 확인
         Member member = tokenProvider.getMemberFromAuthentication();
         if (null == member) {
@@ -118,9 +133,9 @@ public class MemberService {
         }
 
         /* *
-        * 위 과정을 다 통과하면 DB에 저장되어 있는 토큰을 삭제
-        * 토큰이 삭제되면 다시 로그인을 해 토큰을 새로 발급받기 전까지는 사용자에게 권한이 없어진다.
-        * */
+         * 위 과정을 다 통과하면 DB에 저장되어 있는 토큰을 삭제
+         * 토큰이 삭제되면 다시 로그인을 해 토큰을 새로 발급받기 전까지는 사용자에게 권한이 없어진다.
+         * */
         return tokenProvider.deleteRefreshToken(member);
     }
 
