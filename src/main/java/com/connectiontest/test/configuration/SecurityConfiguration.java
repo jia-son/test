@@ -49,7 +49,6 @@ public class SecurityConfiguration {
     private final AuthenticationEntryPointException authenticationEntryPointException;
     private final AccessDeniedHandlerException accessDeniedHandlerException;
 
-
     // Bean으로 등록해주지 않으면 PasswordEncoder가 제대로 동작하지 않음
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -60,7 +59,6 @@ public class SecurityConfiguration {
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors();
-
         http.csrf().disable()
 
                 // 맨처음에 권한 없으면 막기 위한 설정
@@ -85,7 +83,6 @@ public class SecurityConfiguration {
                 // jwt 설정
                 .and()
                 .apply(new JwtSecurityConfiguration(SECRET_KEY, tokenProvider, userDetailsService));
-
         return http.build();
     }
 }
