@@ -58,8 +58,6 @@ public class JwtService {
         // 리프레시 토큰도 새로 발급해 DB에 저장
         refreshToken.updateValue(tokenDto.getRefreshToken());
         tokenProvider.tokenToHeaders(tokenDto, response);
-
-        System.out.println("재발급 완료");
         return ResponseDto.success("success");
     }
 }

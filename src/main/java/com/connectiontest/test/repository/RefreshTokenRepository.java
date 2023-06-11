@@ -20,5 +20,5 @@ import java.util.Optional;
  *                                JpaRepository<?, ?>에는 항상 엔터티와 고유값의 데이터 타입을 입력해주어야 함
  */
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
-    Optional<RefreshToken> findByMember(Member member);
+    Optional<RefreshToken> findByMemberId(Long id);
 }

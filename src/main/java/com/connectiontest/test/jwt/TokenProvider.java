@@ -135,7 +135,7 @@ public class TokenProvider {
     // member 객체를 파라미터로 받아 DB에 토큰이 있는지 확인하기 위한 코드
     @Transactional(readOnly = true)
     public RefreshToken isPresentRefreshToken(Member member) {
-        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByMember(member);
+        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByMemberId(member.getId());
         return optionalRefreshToken.orElse(null);
     }
 
