@@ -147,7 +147,7 @@ public class MemberService {
     // 회원 탈퇴 로직
     @Transactional
     public ResponseDto<?> delete(MemberDeleteReqDto memberDeleteReqDto, HttpServletRequest request) {
-        // 토큰 유효성 검증
+        // 토큰 유효성 검증 // 다시 살려야함
         if (!tokenProvider.validateToken(tokenProvider.resolveToken(request))) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }

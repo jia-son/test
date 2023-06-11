@@ -194,7 +194,7 @@ public class TokenProvider {
 
     // HTTP Request의 Header에서 Bearer글자를 떼고 토큰값만 받아오기 위한 메서드
     public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
+        String bearerToken = (request.getHeader("Authorization"));
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }

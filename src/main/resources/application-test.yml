@@ -7,9 +7,13 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
 jwt:
   secret: 4oCYc3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LWhhbmdoYWUtYXNzaWdubWVudC1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3Qtc2VjcmV0LWtleeKAmQo=
+axios:
+  defaults:
+    headers['Access-Control-Allow-Origin']: '*'
+    withCredentials: true

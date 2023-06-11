@@ -77,8 +77,8 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 .antMatchers("/member/signup").permitAll()
                 .antMatchers("/member/login").permitAll()
+                .antMatchers("/member/logout").permitAll()
                 .antMatchers("/member/reissue").permitAll()
-                .antMatchers("/api/**").permitAll()
                 // 그 외 요청은 권한 필요
                 .anyRequest().authenticated()
 
