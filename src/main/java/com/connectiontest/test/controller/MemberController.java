@@ -50,8 +50,8 @@ public class MemberController {
 //        return memberService.logout(request);
 //    }
     @GetMapping(value = "/logout")
-    public ResponseDto<?> logout() {
-        return memberService.logout();
+    public ResponseDto<?> logout(HttpServletRequest request) {
+        return memberService.logout(request);
     }
 
     // 회원 탈퇴

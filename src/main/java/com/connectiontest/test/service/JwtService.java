@@ -65,13 +65,8 @@ public class JwtService {
     public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
 
         // 엑세스 토큰안에 담긴 정보를 이용해 DB상에 실제 사용자가 존재하는지 확인
-//        String accessToken = tokenProvider.resolveToken(request);
-//        Member member = memberRepository.findByMemberId(tokenProvider.getClaimsMemberId(accessToken)).get();
-//        if (null == member) {
-//            return ResponseDto.fail("MEMBER_NOT_FOUND",
-//                    "사용자를 찾을 수 없습니다.");
-//        }
-        Member member = tokenProvider.getMemberFromAuthentication();
+        String accessToken = tokenProvider.resolveToken(request);
+        Member member = memberRepository.findByMemberId(tokenProvider.getClaimsMemberId(accessToken)).get();
         if (null == member) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "사용자를 찾을 수 없습니다.");

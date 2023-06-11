@@ -124,7 +124,12 @@ public class MemberService {
 //        return tokenProvider.deleteRefreshToken(member);
 //    }
     @Transactional
-    public ResponseDto<?> logout() {
+    public ResponseDto<?> logout(HttpServletRequest request) {
+         //토큰 유효성 검증
+        if (!tokenProvider.validateToken(tokenProvider.resolveToken(request))) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
         // 토큰을 통해 실제 사용자가 DB상에 존재하는지 확인
         Member member = tokenProvider.getMemberFromAuthentication();
         if (null == member) {
