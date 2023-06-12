@@ -3,6 +3,7 @@ package com.connectiontest.test.controller;
 import com.connectiontest.test.dto.response.ResponseDto;
 import com.connectiontest.test.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +31,7 @@ public class JwtController {
     private final JwtService jwtService;
 
     @PostMapping(value = "/reissue")
-    public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
         return jwtService.reissue(request, response);
     }
 }
