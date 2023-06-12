@@ -6,6 +6,7 @@ import com.connectiontest.test.dto.request.MemberSignupReqDto;
 import com.connectiontest.test.dto.response.ResponseDto;
 import com.connectiontest.test.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,8 +34,12 @@ public class MemberController {
     private final MemberService memberService;
 
     // 회원가입
+//    @PostMapping(value = "/signup")
+//    public ResponseDto<?> signup(@RequestBody @Valid MemberSignupReqDto memberSignupReqDto) {
+//        return memberService.createMember(memberSignupReqDto);
+//    }
     @PostMapping(value = "/signup")
-    public ResponseDto<?> signup(@RequestBody @Valid MemberSignupReqDto memberSignupReqDto) {
+    public ResponseEntity<?> signup(@RequestBody @Valid MemberSignupReqDto memberSignupReqDto) {
         return memberService.createMember(memberSignupReqDto);
     }
 
@@ -45,10 +50,6 @@ public class MemberController {
     }
 
     // 로그아웃, 사용자로부터 받아야할 정보가 따로 없는 대신 토큰을 봐야하기때문에 HttpServletRequest만 파라미터로 입력한다.
-//    @GetMapping(value = "/logout")
-//    public ResponseDto<?> logout(HttpServletRequest request) {
-//        return memberService.logout(request);
-//    }
     @GetMapping(value = "/logout")
     public ResponseDto<?> logout(HttpServletRequest request) {
         return memberService.logout(request);

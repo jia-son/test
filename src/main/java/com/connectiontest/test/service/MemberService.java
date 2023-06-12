@@ -10,6 +10,7 @@ import com.connectiontest.test.dto.response.TokenDto;
 import com.connectiontest.test.jwt.TokenProvider;
 import com.connectiontest.test.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
  * packageName    : com.member.member_jwt.service
@@ -45,15 +48,42 @@ public class MemberService {
 
     // 회원가입 로직
     @Transactional
-    public ResponseDto<?> createMember(MemberSignupReqDto memberSignupReqDto) {
+//    public ResponseDto<?> createMember(MemberSignupReqDto memberSignupReqDto) {
+//        // 사용자로부터 입력받은 memberId로 DB에 같은 아이디가 있는지 확인
+//        if (null != isPresentMember(memberSignupReqDto.getMemberId())) {
+//            return ResponseDto.fail("DUPLICATED_ID","중복된 아이디 입니다.");
+//        }
+//
+//        // 비밀번호와 비밀번호 확인의 값이 서로 일치하는지 확인
+//        if (!memberSignupReqDto.getPassword().equals(memberSignupReqDto.getPasswordConfirm())) {
+//            return ResponseDto.fail("PASSWORDS_NOT_MATCHED", "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+//        }
+//
+//        Member member = Member.builder()
+//                .memberId(memberSignupReqDto.getMemberId())
+//                .nickname(memberSignupReqDto.getNickname())
+//                .password(passwordEncoder.encode(memberSignupReqDto.getPassword()))
+//                .build();
+//        memberRepository.save(member);
+//        return ResponseDto.success(
+//                MemberResDto.builder()
+//                        .id(member.getId())
+//                        .memberId(member.getMemberId())
+//                        .nickname(member.getNickname())
+//                        .createdAt(member.getCreatedAt())
+//                        .modifiedAt(member.getModifiedAt())
+//                        .build()
+//        );
+//    }
+    public ResponseEntity<?> createMember(MemberSignupReqDto memberSignupReqDto) {
         // 사용자로부터 입력받은 memberId로 DB에 같은 아이디가 있는지 확인
         if (null != isPresentMember(memberSignupReqDto.getMemberId())) {
-            return ResponseDto.fail("DUPLICATED_ID","중복된 아이디 입니다.");
+            return new ResponseEntity<>("중복된 아이디입니다.", BAD_REQUEST);
         }
 
         // 비밀번호와 비밀번호 확인의 값이 서로 일치하는지 확인
         if (!memberSignupReqDto.getPassword().equals(memberSignupReqDto.getPasswordConfirm())) {
-            return ResponseDto.fail("PASSWORDS_NOT_MATCHED", "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+            return new ResponseEntity<>("비밀번호와 비밀번호 확인이 일치하지 않습니다.", BAD_REQUEST);
         }
 
         Member member = Member.builder()
@@ -62,15 +92,7 @@ public class MemberService {
                 .password(passwordEncoder.encode(memberSignupReqDto.getPassword()))
                 .build();
         memberRepository.save(member);
-        return ResponseDto.success(
-                MemberResDto.builder()
-                        .id(member.getId())
-                        .memberId(member.getMemberId())
-                        .nickname(member.getNickname())
-                        .createdAt(member.getCreatedAt())
-                        .modifiedAt(member.getModifiedAt())
-                        .build()
-        );
+        return ResponseEntity.ok(member);
     }
 
     // 로그인 로직
@@ -103,26 +125,6 @@ public class MemberService {
     }
 
     // 로그아웃 로직
-//    @Transactional
-//    public ResponseDto<?> logout(HttpServletRequest request) {
-//        // 토큰 유효성 검증
-//        if (!tokenProvider.validateToken(tokenProvider.resolveToken(request))) {
-//            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-//        }
-//
-//        // 토큰을 통해 실제 사용자가 DB상에 존재하는지 확인
-//        Member member = tokenProvider.getMemberFromAuthentication();
-//        if (null == member) {
-//            return ResponseDto.fail("MEMBER_NOT_FOUND",
-//                    "사용자를 찾을 수 없습니다.");
-//        }
-//
-//        /* *
-//        * 위 과정을 다 통과하면 DB에 저장되어 있는 토큰을 삭제
-//        * 토큰이 삭제되면 다시 로그인을 해 토큰을 새로 발급받기 전까지는 사용자에게 권한이 없어진다.
-//        * */
-//        return tokenProvider.deleteRefreshToken(member);
-//    }
     @Transactional
     public ResponseDto<?> logout(HttpServletRequest request) {
          //토큰 유효성 검증
