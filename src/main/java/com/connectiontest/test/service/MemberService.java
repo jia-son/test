@@ -89,49 +89,62 @@ public class MemberService {
     }
 
     // 로그아웃 로직
+//    @Transactional
+//    public ResponseEntity<?> logout(HttpServletRequest request) {
+//        //토큰 유효성 검증
+//        if (!tokenProvider.validateToken(tokenProvider.resolveToken(request))) {
+//            return ResponseEntity.ok("INVALID_TOKEN");
+//        }
+//
+//        // 토큰을 통해 실제 사용자가 DB상에 존재하는지 확인
+//        Member member = tokenProvider.getMemberFromAuthentication();
+//        if (null == member) {
+//            return ResponseEntity.ok("MEMBER_NOT_FOUND");
+//        }
+//
+//        /* *
+//         * 위 과정을 다 통과하면 DB에 저장되어 있는 토큰을 삭제
+//         * 토큰이 삭제되면 다시 로그인을 해 토큰을 새로 발급받기 전까지는 사용자에게 권한이 없어진다.
+//         * */
+//        tokenProvider.deleteRefreshToken(member);
+//        return ResponseEntity.ok("로그아웃 성공");
+//    }
     @Transactional
-    public ResponseEntity<?> logout(HttpServletRequest request) {
-        //토큰 유효성 검증
-        if (!tokenProvider.validateToken(tokenProvider.resolveToken(request))) {
-            return ResponseEntity.ok("INVALID_TOKEN");
-        }
-
-        // 토큰을 통해 실제 사용자가 DB상에 존재하는지 확인
-        Member member = tokenProvider.getMemberFromAuthentication();
-        if (null == member) {
-            return ResponseEntity.ok("MEMBER_NOT_FOUND");
-        }
-
-        /* *
-         * 위 과정을 다 통과하면 DB에 저장되어 있는 토큰을 삭제
-         * 토큰이 삭제되면 다시 로그인을 해 토큰을 새로 발급받기 전까지는 사용자에게 권한이 없어진다.
-         * */
+    public ResponseEntity<?> logout(Member member) {
         tokenProvider.deleteRefreshToken(member);
         return ResponseEntity.ok("로그아웃 성공");
     }
 
     // 회원 탈퇴 로직
+//    @Transactional
+//    public ResponseEntity<?> delete(MemberDeleteReqDto memberDeleteReqDto, HttpServletRequest request) {
+//        // 토큰 유효성 검증 // 다시 살려야함
+//        if (!tokenProvider.validateToken(tokenProvider.resolveToken(request))) {
+//            return ResponseEntity.ok("INVALID_TOKEN");
+//        }
+//
+//        // 토큰을 통해 실제 사용자가 DB상에 존재하는지 확인
+//        Member member = tokenProvider.getMemberFromAuthentication();
+//        if (null == member) {
+//            return ResponseEntity.ok("MEMBER_NOT_FOUND");
+//        }
+//
+//        // 사용자로부터 입력받은 비밀번호와 DB상의 비밀번호가 일치하는지 확인
+//        if (!member.validatePassword(passwordEncoder, memberDeleteReqDto.getPassword())) {
+//            return ResponseEntity.ok("INVALID_PASSWORD");
+//        }
+//
+//        // 위 과정을 다 통과하면 DB상에서 사용자를 삭제함 cascade설정을 해뒀기때문에 토큰은 자동적으로 삭제됨
+//        memberRepository.delete(member);
+//
+//        return ResponseEntity.ok("회원탈퇴 성공");
+//    }
     @Transactional
-    public ResponseEntity<?> delete(MemberDeleteReqDto memberDeleteReqDto, HttpServletRequest request) {
-        // 토큰 유효성 검증 // 다시 살려야함
-        if (!tokenProvider.validateToken(tokenProvider.resolveToken(request))) {
-            return ResponseEntity.ok("INVALID_TOKEN");
-        }
-
-        // 토큰을 통해 실제 사용자가 DB상에 존재하는지 확인
-        Member member = tokenProvider.getMemberFromAuthentication();
-        if (null == member) {
-            return ResponseEntity.ok("MEMBER_NOT_FOUND");
-        }
-
-        // 사용자로부터 입력받은 비밀번호와 DB상의 비밀번호가 일치하는지 확인
+    public ResponseEntity<?> delete(MemberDeleteReqDto memberDeleteReqDto, Member member) {
         if (!member.validatePassword(passwordEncoder, memberDeleteReqDto.getPassword())) {
             return ResponseEntity.ok("INVALID_PASSWORD");
         }
-
-        // 위 과정을 다 통과하면 DB상에서 사용자를 삭제함 cascade설정을 해뒀기때문에 토큰은 자동적으로 삭제됨
         memberRepository.delete(member);
-
         return ResponseEntity.ok("회원탈퇴 성공");
     }
 
