@@ -4,17 +4,12 @@ import com.connectiontest.test.domain.entity.Member;
 import com.connectiontest.test.dto.request.MemberDeleteReqDto;
 import com.connectiontest.test.dto.request.MemberLoginReqDto;
 import com.connectiontest.test.dto.request.MemberSignupReqDto;
-import com.connectiontest.test.dto.response.ResponseDto;
 import com.connectiontest.test.jwt.TokenProvider;
-import com.connectiontest.test.repository.MemberRepository;
 import com.connectiontest.test.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -52,10 +47,6 @@ public class MemberController {
     }
 
     // 로그아웃, 사용자로부터 받아야할 정보가 따로 없는 대신 토큰을 봐야하기때문에 HttpServletRequest만 파라미터로 입력한다.
-//    @GetMapping(value = "/logout")
-//    public ResponseEntity<?> logout(HttpServletRequest request) {
-//        return memberService.logout(request);
-//    }
     @GetMapping(value = "/logout")
     public ResponseEntity<?> logout() {
         Member member = tokenProvider.getMemberFromAuthentication();
@@ -63,10 +54,6 @@ public class MemberController {
     }
 
     // 회원 탈퇴
-//    @PostMapping(value = "/delete")
-//    public ResponseEntity<?> delete(@RequestBody @Valid MemberDeleteReqDto memberDeleteReqDto, HttpServletRequest request) {
-//        return memberService.delete(memberDeleteReqDto, request);
-//    }
     @PostMapping(value = "/delete")
     public ResponseEntity<?> delete(@RequestBody @Valid MemberDeleteReqDto memberDeleteReqDto) {
         Member member = tokenProvider.getMemberFromAuthentication();

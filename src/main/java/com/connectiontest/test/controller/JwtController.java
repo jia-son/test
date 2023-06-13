@@ -1,6 +1,5 @@
 package com.connectiontest.test.controller;
 
-import com.connectiontest.test.dto.response.ResponseDto;
 import com.connectiontest.test.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

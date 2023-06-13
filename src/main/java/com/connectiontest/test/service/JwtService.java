@@ -2,11 +2,9 @@ package com.connectiontest.test.service;
 
 import com.connectiontest.test.domain.entity.Member;
 import com.connectiontest.test.domain.entity.RefreshToken;
-import com.connectiontest.test.dto.response.ResponseDto;
 import com.connectiontest.test.dto.response.TokenDto;
 import com.connectiontest.test.jwt.TokenProvider;
 import com.connectiontest.test.repository.MemberRepository;
-import com.connectiontest.test.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,9 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
-
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
  * packageName    : com.member.member_jwt.service
